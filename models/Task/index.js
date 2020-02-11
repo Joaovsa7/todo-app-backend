@@ -24,7 +24,7 @@ const Task = new Schema({
     required: true,
   },
   status: {
-    type: Boolean,
+    type: Number,
     default: 1
   }
 }, { collection: 'Tarefa' }
