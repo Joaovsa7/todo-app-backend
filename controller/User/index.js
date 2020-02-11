@@ -48,13 +48,14 @@ module.exports = {
         };
 
         const { email, password } = user;
-        const actualUser = await UserModel.findOne({ email }).exec();
-        if (!actualUser) {
+        const { _doc: userData = {} } = await UserModel.findOne({ email }).exec();
+        if (!userData) {
             res.status(400).send({
                 error: `The email ${user.email} does not exists in database`
             });
         }
-        bcrypt.compare(password, '')
+
+        bcrypt.compare(password, userData.password)
             .then((response) => {
                 if (!response) {
                     res.status(500).send({
@@ -64,14 +65,13 @@ module.exports = {
                     });
                 };
 
-                const { _doc: userData } = actualUser;
                 const { _id: id } = userData;
                 const token = jwt.sign({ id },
                     process.env.SECRET, {
                     expiresIn: 3000
                 });
                 res.status(200).send({
-                    user: { ...actualUser._doc },
+                    user: { ...userData },
                     auth: true,
                     token,
                 });
@@ -80,7 +80,7 @@ module.exports = {
                 res.status(500).send({
                     user: null,
                     auth: false,
-                    error,
+                    error: `${error}`,
                     message: 'Internal server error'
                 });
             });
