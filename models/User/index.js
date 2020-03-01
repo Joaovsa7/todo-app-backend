@@ -1,10 +1,6 @@
 const { Schema, model } = require('mongoose');
 
 const User = new Schema({
-    _id: {
-        type: String,
-        required: true,
-    },
     firstName: {
         type: String,
         required: true,
@@ -26,7 +22,7 @@ const User = new Schema({
         default: Date.now(),
     },
     status: {
-        type: Boolean,
+        type: Number,
         default: 1
     }
 }, { collection: 'User' }

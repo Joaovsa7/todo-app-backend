@@ -1,19 +1,21 @@
 const TasksModel = require('../../models/Task');
 
 module.exports = {
-  getByName: async (req, res, next) => {
-    const title = req.params.title;
-    if (!title) {
-      res.status(404).send({ error: 'You must to pass the title' });
+  byUser: async (req, res, next) => {
+    const id = req.params.id;
+    if (!id) {
+      res.status(404).send({ error: 'You must to pass the id of user' });
     }
-    const taskByName = await TasksModel.findOne({
-      title,
+
+    const userTasks = await TasksModel.find({
+      user_id: id,
       status: 1
     }).exec();
 
-    res.send({
-      ...(taskByName ? { task: taskByName } : { error: 'Task not found' })
-    });
+    const hasTasks = userTasks.length ? {
+      tasks: userTasks
+    } : { error: 'Tasks by user not found' };
+    res.status(200).send(hasTasks);
   },
   create: async (req, res, next) => {
     const taskObj = {
@@ -52,9 +54,7 @@ module.exports = {
       const task = await TasksModel.findOne({ title });;
       if (!task) {
         res.send({
-          error: {
-            message: `The task ${title} does not exist in database`
-          }
+          error: `The task ${title} does not exist in database`
         });
       }
 
@@ -67,12 +67,15 @@ module.exports = {
   },
   deleteTask: async (req, res, next) => {
     const { id } = req.params;
-
+    const { token } = req.headers;
+    if (!token) {
+      return res.status(403).send({
+        error: 'Unauthorized'
+      });
+    }
     if (!id) {
-      res.send({
-        error: {
-          message: 'You must to pass the id of task to delete'
-        }
+      return res.send({
+        error: 'You must to pass the id of task to delete'
       });
     }
 
@@ -86,7 +89,7 @@ module.exports = {
 
       const newTaskObj = Object.assign(task, { ...task, status: 0 });
       newTaskObj.save();
-      res.send({
+      res.status(200).send({
         success: 'Task was deleted with successfull'
       });
     } catch (e) {
@@ -94,7 +97,8 @@ module.exports = {
     }
   },
   getAll: async (req, res) => {
+    console.log('oi');
     const tasks = await TasksModel.find({ status: 1 });
-    return res.send({ tasks });
+    return res.send(tasks);
   }
 };
