@@ -56,7 +56,8 @@ module.exports = {
         };
 
         const { email, password } = user;
-        const { _doc: userData = {} } = await UserModel.findOne({ email }).exec() || false;
+        const { _doc: userData = {} } = await UserModel.findOne({ email }).exec();
+        console.log({ user }, "joao");
         if (!userData) {
             res.status(400).send({
                 error: `The email ${user.email} does not exists in database`
@@ -66,6 +67,7 @@ module.exports = {
         bcrypt.compare(password, userData.password)
             .then((response) => {
                 if (!response) {
+                    console.log({ user });
                     console.log('oi');
                     res.status(500).send({
                         user: null,
@@ -87,6 +89,7 @@ module.exports = {
                 });
             })
             .catch((error) => {
+                console.log({ user });
                 res.status(500).send({
                     user: null,
                     auth: false,
