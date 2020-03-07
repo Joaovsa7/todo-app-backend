@@ -12,4 +12,4 @@ app.get('/', (req, res) => {
 });
 app.use('/task', taskRouter);
 app.use('/user', userRouter);
-app.listen(process.env.APP_PORT, () => console.log('Server is running'));
+app.listen(process.env.APP_PORT || 4000, () => console.log('Server is running'));
