@@ -14,7 +14,7 @@ module.exports = {
         try {
             const alreadyExists = await UserModel.findOne({ email: user.email });
             if (alreadyExists) {
-                res.status(400).send({
+                return res.status(400).send({
                     error: `The email ${user.email} is already in use, try to login`
                 });
             };
@@ -25,10 +25,18 @@ module.exports = {
                 password: encryptedPassowrd
             });
 
-            res.send({
+            const { _id: id } = registeredUser;
+            const token = jwt.sign({ id },
+                process.env.SECRET, {
+                expiresIn: 3000
+            });
+
+            return res.send({
                 status: "success",
                 message: "User created successfully!",
-                data: {
+                auth: true,
+                token,
+                user: {
                     ...registeredUser
                 }
             });
@@ -48,7 +56,7 @@ module.exports = {
         };
 
         const { email, password } = user;
-        const { _doc: userData = {} } = await UserModel.findOne({ email }).exec();
+        const { _doc: userData = {} } = await UserModel.findOne({ email }).exec() || false;
         if (!userData) {
             res.status(400).send({
                 error: `The email ${user.email} does not exists in database`
@@ -58,10 +66,11 @@ module.exports = {
         bcrypt.compare(password, userData.password)
             .then((response) => {
                 if (!response) {
+                    console.log('oi');
                     res.status(500).send({
                         user: null,
                         auth: false,
-                        message: 'The password are incorrect'
+                        error: 'User not found'
                     });
                 };
 
@@ -70,6 +79,7 @@ module.exports = {
                     process.env.SECRET, {
                     expiresIn: 3000
                 });
+                console.log(token);
                 res.status(200).send({
                     user: { ...userData },
                     auth: true,
@@ -80,8 +90,7 @@ module.exports = {
                 res.status(500).send({
                     user: null,
                     auth: false,
-                    error: `${error}`,
-                    message: 'Internal server error'
+                    error: error,
                 });
             });
     },

@@ -1,16 +1,17 @@
 const router = require('express').Router();
+const verifyJwtToken = require('../helpers/verifyJwt');
 const {
-    getByName,
+    byUser,
     getAll,
     create,
     update,
     deleteTask
 } = require('../controller/Task/index');
 
-router.get('/all', getAll);
-router.get('/:title', getByName);
-router.post('/create', create);
-router.put('/update/:title', update);
-router.delete('/delete/:id', deleteTask);
+router.get('/all', verifyJwtToken, getAll);
+router.get('/user/:id', verifyJwtToken, byUser);
+router.post('/create', verifyJwtToken, create);
+router.put('/update/:title', verifyJwtToken, update);
+router.post('/delete/:id', verifyJwtToken, deleteTask);
 
 module.exports = router;

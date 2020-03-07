@@ -1,19 +1,21 @@
 const TasksModel = require('../../models/Task');
 
 module.exports = {
-  getByName: async (req, res, next) => {
-    const title = req.params.title;
-    if (!title) {
-      res.status(404).send({ error: 'You must to pass the title' });
+  byUser: async (req, res, next) => {
+    const id = req.params.id;
+    if (!id) {
+      res.status(404).send({ error: 'You must to pass the id of user' });
     }
-    const taskByName = await TasksModel.findOne({
-      title,
+
+    const userTasks = await TasksModel.find({
+      user_id: id,
       status: 1
     }).exec();
 
-    res.send({
-      ...(taskByName ? { task: taskByName } : { error: 'Task not found' })
-    });
+    const hasTasks = userTasks.length ? {
+      tasks: userTasks
+    } : { error: 'Tasks by user not found' };
+    res.status(200).send(hasTasks);
   },
   create: async (req, res, next) => {
     const taskObj = {
@@ -31,30 +33,30 @@ module.exports = {
     }
   },
   update: async (req, res, next) => {
-    const { title } = req.params;
-    if (!title) {
+    const { id } = req.params;
+    const { task } = req.body;
+    if (!id) {
       res.status(422).send({
-        error: 'You must to pass the title of task',
+        error: 'You must to pass the id of task',
       });
     }
-    const { user } = req.body;
-    if (!Object.keys(user).length) {
+    if (!Object.keys(task).length) {
       res.status(422).send({
         error: 'You must to pass any data',
       });
     };
 
+    const date = new Date();
     const newTaskObj = {
-      ...user,
+      ...task,
+      updatedAt: date,
     };
 
     try {
-      const task = await TasksModel.findOne({ title });;
+      const task = await TasksModel.findOne({ _id: id });;
       if (!task) {
         res.send({
-          error: {
-            message: `The task ${title} does not exist in database`
-          }
+          error: `This task does not exists in database`
         });
       }
 
@@ -67,12 +69,9 @@ module.exports = {
   },
   deleteTask: async (req, res, next) => {
     const { id } = req.params;
-
     if (!id) {
-      res.send({
-        error: {
-          message: 'You must to pass the id of task to delete'
-        }
+      return res.send({
+        error: 'You must to pass the id of task to delete'
       });
     }
 
@@ -83,10 +82,10 @@ module.exports = {
           error: `The task with id: ${id} does not exist in database`,
         });
       }
-
-      const newTaskObj = Object.assign(task, { ...task, status: 0 });
+      const date = new Date();
+      const newTaskObj = Object.assign(task, { ...task, status: 0, deletedAt: date });
       newTaskObj.save();
-      res.send({
+      res.status(200).send({
         success: 'Task was deleted with successfull'
       });
     } catch (e) {
@@ -95,6 +94,6 @@ module.exports = {
   },
   getAll: async (req, res) => {
     const tasks = await TasksModel.find({ status: 1 });
-    return res.send({ tasks });
+    return res.send(tasks);
   }
 };

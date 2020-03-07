@@ -7,20 +7,35 @@ const Task = new Schema({
     type: String,
     required: true,
   },
+  resume: {
+    type: String,
+    required: false,
+  },
   description: {
     type: String,
-    required: true,
+    required: true
   },
   done: {
     type: Boolean,
     default: false,
   },
+  doneAt: {
+    type: Date
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
+  updatedAt: {
+    type: Date,
+    default: null
+  },
+  deletedAt: {
+    type: Date,
+    default: null
+  },
   user_id: {
-    type: Number,
+    type: String,
     required: true,
   },
   status: {
