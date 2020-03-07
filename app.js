@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const app = express();
 const taskRouter = require('./routes/task');
@@ -8,10 +9,10 @@ const userRouter = require('./routes/user');
 app.use(express.json());
 app.use(cors('*'));
 app.get('/', (req, res) => {
-    res.send('Hello :)');
+    res.sendFile(path.join(__dirname + '/index.htm'));
 });
+
 app.use('/task', taskRouter);
 app.use('/user', userRouter);
-const host = '0.0.0.0';
-const server = app.listen(process.env.PORT || 4000, host);
-console.log(`Server is running at`);
+
+const server = app.listen(process.env.PORT || 4000);
