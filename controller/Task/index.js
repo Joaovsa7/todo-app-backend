@@ -8,7 +8,7 @@ module.exports = {
     }
 
     const userTasks = await TasksModel.find({
-      user_id: id,
+      userId: id,
       status: 1
     }).exec();
 
