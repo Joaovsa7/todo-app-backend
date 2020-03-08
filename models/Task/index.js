@@ -19,7 +19,10 @@ const Task = new Schema({
     type: Boolean,
     default: false,
   },
-  doneAt: {
+  dueDate: {
+    type: Date
+  },
+  dueTime: {
     type: Date
   },
   createdAt: {

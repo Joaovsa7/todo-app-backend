@@ -66,6 +66,8 @@ module.exports = {
         bcrypt.compare(password, userData.password)
             .then((response) => {
                 if (!response) {
+                    console.log({ user });
+                    console.log('oi');
                     res.status(500).send({
                         user: null,
                         auth: false,
@@ -78,7 +80,7 @@ module.exports = {
                     process.env.SECRET, {
                     expiresIn: 3000
                 });
-
+                console.log(token);
                 res.status(200).send({
                     user: { ...userData },
                     auth: true,
@@ -86,6 +88,7 @@ module.exports = {
                 });
             })
             .catch((error) => {
+                console.log({ user });
                 res.status(500).send({
                     user: null,
                     auth: false,
