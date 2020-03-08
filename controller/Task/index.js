@@ -25,10 +25,11 @@ module.exports = {
 
     try {
       const taskCreated = await TasksModel.create({ ...taskObj });
-      res.send({ task: taskCreated });
+      res.send({ task: taskCreated, message: `Task ${taskCreated.title} was created.` });
     } catch (e) {
       res.send({
-        error: `${e}`
+        error: `${e}`,
+        message: null
       });
     }
   },
