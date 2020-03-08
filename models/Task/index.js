@@ -39,7 +39,7 @@ const Task = new Schema({
     type: Date,
     default: null
   },
-  userId: {
+  user_id: {
     type: String,
     required: true,
   },
