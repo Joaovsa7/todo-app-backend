@@ -20,11 +20,11 @@ const Task = new Schema({
     default: false,
   },
   dueDate: {
-    type: Date,
+    type: String,
     required: true,
   },
   dueTime: {
-    type: Date,
+    type: String,
     required: true
   },
   createdAt: {
@@ -39,7 +39,7 @@ const Task = new Schema({
     type: Date,
     default: null
   },
-  user_id: {
+  userId: {
     type: String,
     required: true,
   },
