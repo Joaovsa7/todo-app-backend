@@ -78,11 +78,12 @@ module.exports = {
                 const { _id: id } = userData;
                 const token = jwt.sign({ id },
                     process.env.SECRET, {
-                    expiresIn: 3000
+                    expiresIn: '365'
                 });
-                console.log(token);
+
                 res.status(200).send({
                     user: { ...userData },
+                    error: null,
                     auth: true,
                     token,
                 });
