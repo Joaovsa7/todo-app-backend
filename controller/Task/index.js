@@ -25,11 +25,10 @@ module.exports = {
 
     try {
       const taskCreated = await TasksModel.create({ ...taskObj });
-      res.send({ ...taskCreated, success: `Task ${taskCreated.title} was created.` });
+      res.send({ ...taskCreated, message: `Task ${taskCreated.title} was created.` });
     } catch (e) {
       res.send({
         error: `${e}`,
-        success: null
       });
     }
   },
@@ -87,7 +86,7 @@ module.exports = {
       const newTaskObj = Object.assign(task, { ...task, status: 0, deletedAt: date });
       newTaskObj.save();
       res.status(200).send({
-        success: 'Task was deleted with successfull'
+        message: 'Task was deleted with successfull'
       });
     } catch (e) {
       res.send({ error: `${e}` });
